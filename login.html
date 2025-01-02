@@ -73,7 +73,7 @@
         
         <!-- Banner di errore -->
         <div id="error-banner" class="error-banner">
-            Utente non registrato
+            Utente non registrato o credenziali errate.
         </div>
     </div>
 
@@ -118,9 +118,9 @@
 
                     console.log("Errore:", errorCode);  // Aggiungi un log per vedere l'errore
 
-                    // Verifica se l'errore riguarda l'utente non trovato
-                    if (errorCode === 'auth/user-not-found') {
-                        console.log("Errore: Utente non trovato.");
+                    // Verifica se l'errore riguarda l'utente non trovato o credenziali errate
+                    if (errorCode === 'auth/user-not-found' || errorCode === 'auth/invalid-login-credentials') {
+                        console.log("Errore: Utente non trovato o credenziali errate.");
                         document.getElementById('error-banner').style.display = 'block'; // Mostra il banner
                     } else {
                         console.log("Errore generico:", errorMessage);  // Altri tipi di errore
