@@ -112,15 +112,18 @@
                     window.location.href = 'https://salvox010.github.io/Lettore/dashboard.html';
                 })
                 .catch((error) => {
-                    // Errore nel login: mostriamo il banner di errore
+                    // Errore nel login
                     const errorCode = error.code;
                     const errorMessage = error.message;
+
+                    console.log("Errore:", errorCode);  // Aggiungi un log per vedere l'errore
+
+                    // Verifica se l'errore riguarda l'utente non trovato
                     if (errorCode === 'auth/user-not-found') {
-                        // Mostra il banner di errore se l'utente non è registrato
-                        document.getElementById('error-banner').style.display = 'block';
+                        console.log("Errore: Utente non trovato.");
+                        document.getElementById('error-banner').style.display = 'block'; // Mostra il banner
                     } else {
-                        // Puoi aggiungere altre logiche per altri tipi di errore
-                        console.log(errorMessage);
+                        console.log("Errore generico:", errorMessage);  // Altri tipi di errore
                     }
                 });
         });
