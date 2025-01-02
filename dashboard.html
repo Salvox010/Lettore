@@ -3,51 +3,127 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
+    <title>Dashboard Live</title>
+    <style>
+        /* Impostazioni di base */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f4f8; /* Colore di sfondo chiaro */
+            color: #333; /* Colore del testo scuro ma non troppo pesante */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+        }
+
+        /* Titolo della pagina */
+        h1 {
+            font-size: 36px;
+            color: #5b7b7a; /* Colore verde-blu per il titolo */
+            margin-bottom: 30px;
+        }
+
+        /* Contenitore principale della pagina */
+        .dashboard-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* Layout a colonne */
+            gap: 20px;
+            width: 90%;
+            max-width: 1200px;
+        }
+
+        /* Contenitore di ciascuna roulette */
+        .roulette-column {
+            background-color: #ffffff; /* Colore di sfondo bianco per ogni colonna */
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        /* Effetto hover per le colonne */
+        .roulette-column:hover {
+            transform: translateY(-5px); /* Leggera animazione al passaggio del mouse */
+        }
+
+        /* Intestazione della colonna (nome della roulette) */
+        .roulette-column h2 {
+            font-size: 24px;
+            color: #4a6f5d; /* Verde scuro per i nomi delle roulette */
+            margin-bottom: 10px;
+        }
+
+        /* Stile per lo storico dei numeri */
+        .historical-numbers {
+            font-size: 18px;
+            color: #607d8b; /* Colore grigio-blu per i numeri */
+            background-color: #eef2f4;
+            padding: 10px;
+            border-radius: 4px;
+        }
+
+        /* Aggiungi un po' di spazio tra le colonne */
+        .roulette-column:last-child {
+            margin-right: 0;
+        }
+    </style>
 </head>
 <body>
-    <h2>Login</h2>
-    <form id="login-form">
-        <label for="email">Email:</label>
-        <input type="email" id="email" name="email" required><br><br>
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required><br><br>
-        <button type="submit">Accedi</button>
-    </form>
+
+    <!-- Titolo della dashboard -->
+    <h1>Dashboard Live</h1>
+
+    <!-- Contenitore principale per le colonne delle roulette -->
+    <div class="dashboard-container" id="data-container">
+        <!-- Le colonne delle roulette saranno generate dinamicamente qui -->
+    </div>
 
     <script>
-        // Firebase configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyCk1xPeDOEg4Yq5Kqb9gIjtwtQS4z39Wqw",
-            authDomain: "proviamo-2fcfd.firebaseapp.com",
-            projectId: "proviamo-2fcfd",
-            storageBucket: "proviamo-2fcfd.firebasestorage.app",
-            messagingSenderId: "70236636540",
-            appId: "1:70236636540:web:2583fd06a4683ee261d0f9"
+        // Dati fittizi per la demo, in una situazione reale dovresti prelevarli da Firebase
+        const rouletteData = [
+            {
+                nomeRoulette: 'Roulette 1',
+                numeriEstratti: [5, 12, 23, 18, 34]
+            },
+            {
+                nomeRoulette: 'Roulette 2',
+                numeriEstratti: [14, 29, 7, 17, 26]
+            },
+            {
+                nomeRoulette: 'Roulette 3',
+                numeriEstratti: [11, 20, 8, 15, 33]
+            },
+            {
+                nomeRoulette: 'Roulette 4',
+                numeriEstratti: [2, 19, 30, 21, 4]
+            }
+        ];
+
+        // Funzione per caricare i dati nella pagina
+        function caricaDati() {
+            const container = document.getElementById('data-container');
+            rouletteData.forEach(roulette => {
+                const div = document.createElement('div');
+                div.classList.add('roulette-column');
+
+                div.innerHTML = `
+                    <h2>${roulette.nomeRoulette}</h2>
+                    <div class="historical-numbers">
+                        Numeri estratti: ${roulette.numeriEstratti.join(', ')}
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        // Carica i dati al caricamento della pagina
+        window.onload = function() {
+            caricaDati();
         };
-
-        // Inizializza Firebase
-        const app = firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-
-        // Gestione del login
-        const loginForm = document.getElementById("login-form");
-        loginForm.addEventListener("submit", function(event) {
-            event.preventDefault();
-            const email = document.getElementById("email").value;
-            const password = document.getElementById("password").value;
-
-            auth.signInWithEmailAndPassword(email, password)
-                .then((userCredential) => {
-                    // Redirect alla pagina protetta dopo il login
-                    window.location.replace("dashboard.html");
-                })
-                .catch((error) => {
-                    alert("Errore di login: " + error.message);
-                });
-        });
     </script>
+    
 </body>
 </html>
