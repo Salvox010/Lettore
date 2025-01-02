@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .login-container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 300px;
+        }
+        .login-container h2 {
+            text-align: center;
+        }
+        .form-input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .form-button {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .form-button:hover {
+            background-color: #45a049;
+        }
+        .form-error {
+            color: red;
+            font-size: 12px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h2>Login</h2>
+        <form action="javascript:void(0);" id="login-form">
+            <label for="username">Nome utente</label>
+            <input type="text" id="username" class="form-input" required placeholder="Inserisci il tuo nome utente">
+            
+            <label for="password">Password</label>
+            <input type="password" id="password" class="form-input" required placeholder="Inserisci la tua password">
+            
+            <button type="submit" class="form-button">Accedi</button>
+            <div class="form-error" id="error-message"></div>
+        </form>
+    </div>
+
+    <script>
+        // Simulazione di login
+        document.getElementById('login-form').addEventListener('submit', function(event) {
+            event.preventDefault(); // Evita il comportamento predefinito del form
+
+            // Prendi i dati del form
+            var username = document.getElementById('username').value;
+            var password = document.getElementById('password').value;
+
+            // Esegui una verifica semplice (da sostituire con un sistema reale di autenticazione)
+            if (username === 'admin' && password === '12345') {
+                alert('Login effettuato con successo!');
+                window.location.href = 'https://tuo-nome-utente.github.io/nome-del-repository/';
+            } else {
+                document.getElementById('error-message').textContent = 'Nome utente o password errati.';
+            }
+        });
+    </script>
+</body>
+</html>
