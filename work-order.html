@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Work Order - Dettagli</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f4f8;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        h1 {
+            color: #5b7b7a;
+            margin-bottom: 30px;
+        }
+
+        .work-order-list {
+            width: 80%;
+            max-width: 900px;
+            margin-top: 30px;
+        }
+
+        .work-order-card {
+            background-color: #fff;
+            padding: 20px;
+            margin: 10px 0;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .work-order-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .work-order-card h3 {
+            margin-top: 10px;
+        }
+
+        .work-order-card p {
+            color: #555;
+            font-size: 14px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #d9534f;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 30px;
+        }
+
+        button:hover {
+            background-color: #c9302c;
+        }
+    </style>
+    <script src="https://www.gstatic.com/firebasejs/9.0.2/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.2/firebase-auth.js"></script>
+</head>
+<body>
+
+    <h1>Dettagli Work Order</h1>
+
+    <!-- Lista dei Work Orders -->
+    <div class="work-order-list">
+        <!-- Ogni work order sarà una card -->
+        <div class="work-order-card" onclick="viewWorkOrder('123')">
+            <h3>Work Order #123</h3>
+            <p>Descrizione del lavoro da svolgere.</p>
+        </div>
+
+        <div class="work-order-card" onclick="viewWorkOrder('124')">
+            <h3>Work Order #124</h3>
+            <p>Descrizione del lavoro da svolgere.</p>
+        </div>
+
+        <div class="work-order-card" onclick="viewWorkOrder('125')">
+            <h3>Work Order #125</h3>
+            <p>Descrizione del lavoro da svolgere.</p>
+        </div>
+
+        <!-- Puoi aggiungere dinamicamente altre card -->
+    </div>
+
+    <!-- Bottone per logout -->
+    <button onclick="logout()">Logout</button>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "TUO_API_KEY",
+            authDomain: "TUO_AUTH_DOMAIN",
+            projectId: "TUO_PROJECT_ID",
+            storageBucket: "TUO_STORAGE_BUCKET",
+            messagingSenderId: "TUO_SENDER_ID",
+            appId: "TUO_APP_ID"
+        };
+
+        const app = firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+
+        // Funzione di logout
+        function logout() {
+            auth.signOut().then(function() {
+                window.location.href = "login.html"; // Reindirizza al login
+            }).catch(function(error) {
+                console.error("Errore nel logout: ", error);
+            });
+        }
+
+        // Funzione per visualizzare i dettagli di un Work Order
+        function viewWorkOrder(workOrderId) {
+            // Qui puoi fare una chiamata al database per recuperare i dettagli di questo Work Order.
+            // Per ora, mostriamo semplicemente un alert con l'ID
+            alert("Visualizzando Work Order ID: " + workOrderId);
+            // Puoi anche reindirizzare a una pagina dettagliata per il singolo work order
+            // window.location.href = "work-order-detail.html?id=" + workOrderId;
+        }
+
+        // Verifica se l'utente è autenticato
+        firebase.auth().onAuthStateChanged(function(user) {
+            if (!user) {
+                // Se l'utente non è autenticato, redirigi alla pagina di login
+                window.location.href = "login.html";
+            }
+        });
+    </script>
+
+</body>
+</html>
