@@ -40,25 +40,17 @@
             margin-top: 20px;
             border: 1px solid #ddd;
             border-radius: 8px;
-            overflow-y: scroll;
             background-color: #fff;
             padding: 10px;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
-        .text-box {
-            width: 100%;
-            padding: 5px;
-            margin-bottom: 5px;
-            font-size: 14px;
+        #pdf-canvas {
             border: 1px solid #ccc;
-            border-radius: 5px;
-            box-sizing: border-box;
             background-color: #f9f9f9;
-        }
-
-        .highlight {
-            color: blue;
-            font-weight: bold;
         }
     </style>
 
@@ -77,7 +69,8 @@
 
     <!-- Contenitore per il PDF -->
     <div class="pdf-container" id="pdf-container">
-        <!-- Le righe del PDF verranno aggiunte qui dinamicamente -->
+        <!-- Il PDF sarà renderizzato qui -->
+        <canvas id="pdf-canvas"></canvas>
     </div>
 
     <script>
@@ -103,53 +96,26 @@
         function renderPDF(pdfData) {
             const loadingTask = pdfjsLib.getDocument({ data: pdfData });
             loadingTask.promise.then(function(pdf) {
-                // Pulire il contenitore prima di renderizzare
-                const viewer = document.getElementById('pdf-container');
-                viewer.innerHTML = ''; // Pulisce il contenuto precedente
+                // Prendere la prima pagina del PDF
+                pdf.getPage(1).then(function(page) {
+                    // Impostare il canvas per il rendering
+                    const scale = 1.5; // Dimensione di zoom
+                    const viewport = page.getViewport({ scale: scale });
 
-                // Iterare attraverso ogni pagina e renderizzarla
-                for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
-                    pdf.getPage(pageNum).then(function(page) {
-                        // Estrarre il testo dalla pagina
-                        extractTextFromPage(page).then(function(text) {
-                            // Suddividere il testo in righe
-                            const lines = text.split('\n');
-                            lines.forEach(function(line) {
-                                const textBox = document.createElement('textarea');
-                                textBox.classList.add('text-box');
-                                textBox.value = line;
+                    const canvas = document.getElementById('pdf-canvas');
+                    const context = canvas.getContext('2d');
+                    canvas.height = viewport.height;
+                    canvas.width = viewport.width;
 
-                                // Evidenziare in blu se la riga contiene un codice
-                                if (containsCode(line)) {
-                                    textBox.classList.add('highlight');
-                                }
-
-                                viewer.appendChild(textBox);
-                            });
-                        });
+                    // Renderizzare la pagina nel canvas
+                    page.render({
+                        canvasContext: context,
+                        viewport: viewport
                     });
-                }
+                });
             }, function(error) {
                 alert("Errore nel caricamento del PDF: " + error.message);
             });
-        }
-
-        // Funzione per estrarre il testo dalla pagina PDF
-        function extractTextFromPage(page) {
-            return page.getTextContent().then(function(textContent) {
-                const textItems = textContent.items;
-                let text = '';
-                textItems.forEach(function(item) {
-                    text += item.str + '\n'; // Aggiungi ogni riga di testo
-                });
-                return text;
-            });
-        }
-
-        // Funzione per verificare se una riga contiene un codice (esempio: numeri o lettere in maiuscolo)
-        function containsCode(line) {
-            const regex = /\b[A-Z0-9]{4,}\b/g; // Codice con almeno 4 caratteri alfanumerici maiuscoli
-            return regex.test(line);
         }
     </script>
 </body>
