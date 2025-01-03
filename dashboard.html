@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Carica e Visualizza PDF</title>
+    <title>Dashboard</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -17,106 +17,125 @@
             height: 100vh;
         }
 
-        h2 {
+        h1 {
             color: #5b7b7a;
             margin-bottom: 30px;
         }
 
-        .pdf-upload-container {
+        .card-container {
             display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-bottom: 30px;
-        }
-
-        .file-input {
-            margin: 20px 0;
-        }
-
-        .pdf-container {
+            justify-content: space-around;
+            margin-top: 30px;
             width: 80%;
-            max-width: 800px;
-            height: 500px;
-            margin-top: 20px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            background-color: #fff;
-            padding: 10px;
-            overflow: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            max-width: 900px;
         }
 
-        #pdf-canvas {
-            border: 1px solid #ccc;
-            background-color: #f9f9f9;
+        .card {
+            background-color: #fff;
+            padding: 20px;
+            width: 250px;
+            height: 180px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+        }
+
+        .card h3 {
+            margin-top: 10px;
+        }
+
+        .card p {
+            color: #555;
+            font-size: 14px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #d9534f;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 30px;
+        }
+
+        button:hover {
+            background-color: #c9302c;
         }
     </style>
-
-    <!-- Aggiungere il link per includere PDF.js -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.2/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.2/firebase-auth.js"></script>
 </head>
 <body>
 
-    <h2>Carica e Visualizza PDF</h2>
+    <h1>Benvenuto nella Dashboard</h1>
 
-    <!-- Box di caricamento del PDF -->
-    <div class="pdf-upload-container">
-        <input type="file" id="pdf-file" class="file-input" accept="application/pdf">
-        <button onclick="loadPDF()">Carica PDF</button>
+    <div class="card-container">
+        <div class="card" id="work-order-card">
+            <h3>Work Order</h3>
+            <p>Gestisci e visualizza gli ordini di lavoro</p>
+        </div>
+
+        <div class="card" id="cdportal-card">
+            <h3>CDportal</h3>
+            <p>Accedi al portale CD per gestire i contenuti</p>
+        </div>
+
+        <div class="card" id="ricorsivi-card">
+            <h3>Ricorsivi</h3>
+            <p>Visualizza e gestisci le attività ricorsive</p>
+        </div>
     </div>
 
-    <!-- Contenitore per il PDF -->
-    <div class="pdf-container" id="pdf-container">
-        <!-- Il PDF sarà renderizzato qui -->
-        <canvas id="pdf-canvas"></canvas>
-    </div>
+    <button onclick="logout()">Logout</button>
 
     <script>
-        // Funzione per caricare e visualizzare il PDF
-        function loadPDF() {
-            const fileInput = document.getElementById('pdf-file');
-            const file = fileInput.files[0];
-            if (!file) {
-                alert("Seleziona un file PDF prima.");
-                return;
+        const firebaseConfig = {
+            apiKey: "TUO_API_KEY",
+            authDomain: "TUO_AUTH_DOMAIN",
+            projectId: "TUO_PROJECT_ID",
+            storageBucket: "TUO_STORAGE_BUCKET",
+            messagingSenderId: "TUO_SENDER_ID",
+            appId: "TUO_APP_ID"
+        };
+
+        const app = firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+
+        // Verifica se l'utente è autenticato
+        firebase.auth().onAuthStateChanged(function(user) {
+            if (!user) {
+                // Se l'utente non è autenticato, redirigi alla pagina di login
+                window.location.href = "login.html";
             }
+        });
 
-            // Utilizzare FileReader per leggere il file PDF
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const pdfData = e.target.result;
-                renderPDF(pdfData);
-            };
-            reader.readAsArrayBuffer(file);
-        }
-
-        // Funzione per renderizzare il PDF con PDF.js
-        function renderPDF(pdfData) {
-            const loadingTask = pdfjsLib.getDocument({ data: pdfData });
-            loadingTask.promise.then(function(pdf) {
-                // Prendere la prima pagina del PDF
-                pdf.getPage(1).then(function(page) {
-                    // Impostare il canvas per il rendering
-                    const scale = 1.5; // Dimensione di zoom
-                    const viewport = page.getViewport({ scale: scale });
-
-                    const canvas = document.getElementById('pdf-canvas');
-                    const context = canvas.getContext('2d');
-                    canvas.height = viewport.height;
-                    canvas.width = viewport.width;
-
-                    // Renderizzare la pagina nel canvas
-                    page.render({
-                        canvasContext: context,
-                        viewport: viewport
-                    });
-                });
-            }, function(error) {
-                alert("Errore nel caricamento del PDF: " + error.message);
+        // Funzione di logout
+        function logout() {
+            auth.signOut().then(function() {
+                window.location.href = "login.html"; // Reindirizza al login
+            }).catch(function(error) {
+                console.error("Errore nel logout: ", error);
             });
         }
+
+        // Eventi per navigare alle diverse sezioni
+        document.getElementById("work-order-card").addEventListener("click", function() {
+            window.location.href = "work-order.html"; // Vai alla pagina di dettaglio Work Order
+        });
+
+        document.getElementById("cdportal-card").addEventListener("click", function() {
+            window.location.href = "cdportal.html"; // Vai alla pagina di dettaglio CDportal
+        });
+
+        document.getElementById("ricorsivi-card").addEventListener("click", function() {
+            window.location.href = "ricorsivi.html"; // Vai alla pagina di dettaglio Ricorsivi
+        });
     </script>
 </body>
 </html>
