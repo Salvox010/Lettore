@@ -3,161 +3,160 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Live</title>
+    <title>Carica e Visualizza PDF</title>
     <style>
-        /* Stile di base */
         body {
             font-family: Arial, sans-serif;
-            background-color: #f0f4f8; /* Colore di sfondo chiaro */
+            background-color: #f0f4f8;
             margin: 0;
             padding: 0;
             display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            height: 100vh;
             flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
         }
 
-        /* Titolo della pagina */
         h2 {
-            font-size: 36px;
-            color: #5b7b7a; /* Colore verde-blu per il titolo */
+            color: #5b7b7a;
             margin-bottom: 30px;
-            text-align: center;
         }
 
-        /* Contenitore della dashboard */
-        .dashboard-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Layout a griglia responsiva */
-            gap: 20px;
-            padding: 20px;
-            width: 100%;
-            max-width: 1200px;
-            margin-top: 50px;
-        }
-
-        /* Contenitore singola roulette */
-        .roulette-box {
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        .pdf-upload-container {
             display: flex;
             flex-direction: column;
-            height: 100%;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .file-input {
+            margin: 20px 0;
+        }
+
+        .pdf-container {
+            width: 80%;
+            max-width: 800px;
+            margin-top: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
             overflow: hidden;
+            background-color: #fff;
         }
 
-        /* Intestazione della roulette */
-        .roulette-header {
-            font-size: 20px;
-            color: #4a6f5d;
-            font-weight: bold;
-            margin-bottom: 15px;
-            text-align: center;
-        }
-
-        /* Storico numeri */
-        .numbers-list {
-            max-height: 300px; /* Limita l'altezza per avere uno scroll */
-            overflow-y: auto; /* Scroll verticale per i numeri */
-            margin-top: 10px;
-            font-size: 16px;
-            color: #333;
-        }
-
-        .numbers-list div {
-            padding: 5px;
-            border-bottom: 1px solid #ddd;
-        }
-
-        /* Bottone per caricare più numeri (optional, in caso di lazy loading) */
-        .load-more {
-            margin-top: 15px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            padding: 10px;
-            cursor: pointer;
+        #pdf-viewer {
             width: 100%;
-            font-size: 16px;
+            height: 500px;
+            overflow-y: scroll;
+            padding: 10px;
         }
 
-        .load-more:hover {
-            background-color: #45a049;
+        .page {
+            margin-bottom: 30px;
+            padding: 10px;
+            background-color: #fafafa;
+            border-radius: 5px;
+        }
+
+        .text-content {
+            white-space: pre-wrap;
+            font-family: "Courier New", Courier, monospace;
+            line-height: 1.5;
+            font-size: 14px;
         }
     </style>
+
+    <!-- Aggiungere il link per includere PDF.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script>
 </head>
 <body>
 
-    <!-- Titolo della pagina -->
-    <h2>Dashboard Live</h2>
+    <h2>Carica e Visualizza PDF</h2>
 
-    <!-- Contenitore della Dashboard con le roulette -->
-    <div class="dashboard-container" id="dashboard-container">
-        <!-- Esempio di roulette (questo verrà popolato dinamicamente tramite JavaScript) -->
-        <div class="roulette-box">
-            <div class="roulette-header">Roulette 1</div>
-            <div class="numbers-list" id="roulette-1">
-                <!-- Numeri estratti per questa roulette -->
-            </div>
-            <button class="load-more" onclick="loadMoreNumbers(1)">Carica più numeri</button>
-        </div>
+    <!-- Box di caricamento del PDF -->
+    <div class="pdf-upload-container">
+        <input type="file" id="pdf-file" class="file-input" accept="application/pdf">
+        <button onclick="loadPDF()">Carica PDF</button>
+    </div>
 
-        <!-- Altri elementi di roulette verranno aggiunti dinamicamente qui -->
+    <!-- Contenitore per il PDF -->
+    <div class="pdf-container" id="pdf-container">
+        <div id="pdf-viewer"></div>
     </div>
 
     <script>
-        // Esempio di dati delle roulette
-        const rouletteData = {
-            "Roulette 1": [12, 8, 19, 32, 15, 9, 20, 33, 17],
-            "Roulette 2": [5, 22, 14, 36, 25, 11, 27, 18, 13],
-            // Aggiungi altre roulette e numeri
-        };
-
-        // Funzione per caricare i numeri per una roulette
-        function loadRouletteData() {
-            const dashboardContainer = document.getElementById('dashboard-container');
-            for (const rouletteName in rouletteData) {
-                const rouletteBox = document.createElement('div');
-                rouletteBox.classList.add('roulette-box');
-
-                const rouletteHeader = document.createElement('div');
-                rouletteHeader.classList.add('roulette-header');
-                rouletteHeader.textContent = rouletteName;
-
-                const numbersList = document.createElement('div');
-                numbersList.classList.add('numbers-list');
-                rouletteData[rouletteName].forEach(number => {
-                    const numberDiv = document.createElement('div');
-                    numberDiv.textContent = number;
-                    numbersList.appendChild(numberDiv);
-                });
-
-                const loadMoreButton = document.createElement('button');
-                loadMoreButton.classList.add('load-more');
-                loadMoreButton.textContent = 'Carica più numeri';
-                loadMoreButton.onclick = () => loadMoreNumbers(rouletteName);
-
-                rouletteBox.appendChild(rouletteHeader);
-                rouletteBox.appendChild(numbersList);
-                rouletteBox.appendChild(loadMoreButton);
-
-                dashboardContainer.appendChild(rouletteBox);
+        // Funzione per caricare e visualizzare il PDF
+        function loadPDF() {
+            const fileInput = document.getElementById('pdf-file');
+            const file = fileInput.files[0];
+            if (!file) {
+                alert("Seleziona un file PDF prima.");
+                return;
             }
+
+            // Utilizzare FileReader per leggere il file PDF
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const pdfData = e.target.result;
+                renderPDF(pdfData);
+            };
+            reader.readAsArrayBuffer(file);
         }
 
-        // Funzione per caricare più numeri (Lazy loading o paginazione)
-        function loadMoreNumbers(rouletteName) {
-            // Aggiungi altri numeri al volo
-            console.log(`Caricando più numeri per ${rouletteName}`);
-            // Aggiungi logica per caricare numeri aggiuntivi o aggiornare la vista
+        // Funzione per renderizzare il PDF con PDF.js
+        function renderPDF(pdfData) {
+            const loadingTask = pdfjsLib.getDocument({ data: pdfData });
+            loadingTask.promise.then(function(pdf) {
+                // Pulire il contenitore prima di renderizzare
+                const viewer = document.getElementById('pdf-viewer');
+                viewer.innerHTML = ''; // Pulisce il contenuto precedente
+
+                // Iterare attraverso ogni pagina e renderizzarla
+                for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+                    pdf.getPage(pageNum).then(function(page) {
+                        const pageDiv = document.createElement('div');
+                        pageDiv.classList.add('page');
+
+                        // Renderizzare la pagina come immagine
+                        const scale = 1.5; // Dimensione di zoom
+                        const viewport = page.getViewport({ scale: scale });
+                        const canvas = document.createElement('canvas');
+                        const context = canvas.getContext('2d');
+                        canvas.height = viewport.height;
+                        canvas.width = viewport.width;
+
+                        page.render({
+                            canvasContext: context,
+                            viewport: viewport
+                        }).promise.then(function() {
+                            pageDiv.appendChild(canvas);
+                            viewer.appendChild(pageDiv);
+                        });
+
+                        // Estrarre il testo dalla pagina (opzionale, per evidenziare le righe)
+                        extractTextFromPage(page).then(function(text) {
+                            const textDiv = document.createElement('div');
+                            textDiv.classList.add('text-content');
+                            textDiv.textContent = text;
+                            pageDiv.appendChild(textDiv);
+                        });
+                    });
+                }
+            }, function(error) {
+                alert("Errore nel caricamento del PDF: " + error.message);
+            });
         }
 
-        // Carica i dati delle roulette quando la pagina è pronta
-        window.onload = loadRouletteData;
+        // Funzione per estrarre il testo dalla pagina PDF
+        function extractTextFromPage(page) {
+            return page.getTextContent().then(function(textContent) {
+                const textItems = textContent.items;
+                let text = '';
+                textItems.forEach(function(item) {
+                    text += item.str + '\n'; // Aggiungi ogni riga di testo
+                });
+                return text;
+            });
+        }
     </script>
 </body>
 </html>
