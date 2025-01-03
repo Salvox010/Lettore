@@ -112,6 +112,9 @@
             if (!user) {
                 // Se l'utente non è autenticato, redirigi alla pagina di login
                 window.location.href = "login.html";
+            } else {
+                // L'utente è autenticato, carica il contenuto della dashboard
+                console.log("Utente autenticato: ", user.email);
             }
         });
 
